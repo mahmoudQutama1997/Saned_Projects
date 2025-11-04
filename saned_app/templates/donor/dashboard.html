@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block title %}لوحة المتبرع - ساند{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="direction: rtl;">
+  <div class="text-center mb-5">
+    <h2 class="fw-bold text-success">مرحبًا {{ user.first_name }} 🌿</h2>
+    <p class="text-muted fs-5">شكرًا لمساهمتك في نشر الخير عبر منصة <strong>ساند</strong></p>
+  </div>
+
+  {% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-success text-center fs-5 rounded-4 shadow-sm">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+
+  <div class="row mb-5">
+    <div class="col-md-6">
+      <div class="card shadow border-0 rounded-4 bg-light">
+        <div class="card-body text-center">
+          <h5 class="card-title fs-5 text-secondary">📢 الحملات النشطة</h5>
+          <h2 class="text-success">{{ campaigns|length }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 mt-3 mt-md-0">
+      <div class="card shadow border-0 rounded-4 bg-light">
+        <div class="card-body text-center">
+          <h5 class="card-title fs-5 text-secondary">🧍‍♂️ الحالات المعتمدة</h5>
+          <h2 class="text-primary">{{ aid_requests|length }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="text-success mb-3">📌 الحملات النشطة</h4>
+  {% if campaigns %}
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+    {% for campaign in campaigns %}
+    <div class="col">
+      <div class="card h-100 border-0 shadow-sm rounded-4">
+        <div class="card-body">
+          <h5 class="text-success fw-bold">{{ campaign.title }}</h5>
+          <p class="text-muted mb-2"><strong>الهدف:</strong> {{ campaign.goal_amount }} شيكل</p>
+          <p class="text-muted mb-2"><strong>المبلغ المتبقي:</strong>
+            {% if campaign.remaining_amount != None %}
+              {{ campaign.remaining_amount }} شيكل
+            {% else %}
+              {{ campaign.goal_amount }} شيكل
+            {% endif %}
+          </p>
+          <p class="text-muted mb-2"><strong>الجهة:</strong> {{ campaign.ngo.organization_name }}</p>
+          <p class="text-muted mb-0"><strong>الانتهاء:</strong> {{ campaign.deadline }}</p>
+        </div>
+        <div class="card-footer bg-transparent text-center border-0">
+          <a href="{% url 'donate_to_campaign' campaign.id %}" class="btn btn-outline-success rounded-pill px-4">
+            المساهمة الآن
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info text-center">لا توجد حملات حالياً.</div>
+  {% endif %}
+
+  <h4 class="text-primary mb-3">🧍‍♂️ الحالات الفردية المعتمدة</h4>
+  {% if aid_requests %}
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+    {% for request in aid_requests %}
+    <div class="col">
+      <div class="card h-100 border-0 shadow-sm rounded-4">
+        <div class="card-body">
+          <h5 class="fw-bold text-dark">{{ request.beneficiary.first_name }} {{ request.beneficiary.last_name }}</h5>
+          <p class="text-muted mb-2"><strong>نوع المساعدة:</strong> {{ request.type }}</p>
+          <p class="text-muted mb-2"><strong>المبلغ:</strong> {{ request.amount_requested }} شيكل</p>
+          <p class="text-muted mb-2"><strong>المبلغ المتبقي:</strong>
+            {% if request.remaining_amount != None %}
+              {{ request.remaining_amount }} شيكل
+            {% else %}
+              {{ request.amount_requested }} شيكل
+            {% endif %}
+          </p>
+          <p class="text-muted mb-0"><strong>الجهة:</strong> {{ request.ngo.organization_name }}</p>
+        </div>
+        <div class="card-footer bg-transparent text-center border-0">
+          <a href="{% url 'donate_to_request' request.id %}" class="btn btn-outline-primary rounded-pill px-4">
+            دعم الحالة
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info text-center">لا توجد حالات حالياً.</div>
+  {% endif %}
+
+  <h4 class="text-dark mb-3">📜 سجل تبرعاتك</h4>
+  {% if campaign_donations or aid_donations %}
+  <div class="table-responsive">
+    <table class="table table-bordered text-center align-middle rounded-3 overflow-hidden shadow-sm">
+      <thead class="table-light">
+        <tr>
+          <th>نوع التبرع</th>
+          <th>الاسم</th>
+          <th>المبلغ</th>
+          <th>التاريخ</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for donation in campaign_donations %}
+        <tr>
+          <td><span class="badge bg-success">حملة</span></td>
+          <td>{{ donation.campaign.title }}</td>
+          <td>{{ donation.amount }} شيكل</td>
+          <td>{{ donation.created_at|date:"Y-m-d" }}</td>
+        </tr>
+        {% endfor %}
+        {% for donation in aid_donations %}
+        <tr>
+          <td><span class="badge bg-primary">حالة</span></td>
+          <td>{{ donation.request.beneficiary.first_name }} {{ donation.request.beneficiary.last_name }}</td>
+          <td>{{ donation.amount }} شيكل</td>
+          <td>{{ donation.created_at|date:"Y-m-d" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="alert alert-secondary text-center">لم تقم بأي تبرع بعد.</div>
+  {% endif %}
+</div>
+{% endblock %}

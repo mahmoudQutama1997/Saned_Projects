@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}دعم حالة فردية{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="direction: rtl;">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow rounded-4 p-4">
+        <h3 class="text-center fw-bold mb-4 text-success">
+          دعم الحالة: {{ request.beneficiary.first_name }} {{ request.beneficiary.last_name }}
+        </h3>
+
+        <div class="mb-3"><strong>نوع المساعدة:</strong> {{ request.type }}</div>
+        <div class="mb-3"><strong>الوصف:</strong> {{ request.description }}</div>
+        <div class="mb-3"><strong>المبلغ المطلوب:</strong> {{ request.amount_requested }} شيكل</div>
+
+        {% if request.ngo %}
+        <div class="mb-4"><strong>الجهة المتبنية:</strong> {{ request.ngo.organization_name }}</div>
+        {% endif %}
+
+        <form method="post" action="{% url 'donate_to_request' request.id %}">
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label for="amount" class="form-label">المبلغ (بالشيكل):</label>
+            <input type="number" name="amount" id="amount" class="form-control" min="1" required>
+            {% if error %}
+            <div class="text-danger mt-2">{{ error }}</div>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label for="payment_method" class="form-label">طريقة الدفع</label>
+            <select name="payment_method" id="payment_method" class="form-select" onchange="toggleCardFields()" required>
+              <option value="">اختر الطريقة</option>
+              <option value="palpay">PalPay</option>
+              <option value="credit">بطاقة ائتمان</option>
+            </select>
+          </div>
+
+          <div id="card-fields" style="display: none;">
+            <div class="mb-3">
+              <label for="card_number" class="form-label">رقم البطاقة</label>
+              <input type="text" name="card_number" id="card_number" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label for="expiry" class="form-label">تاريخ الانتهاء</label>
+              <input type="text" name="expiry" id="expiry" class="form-control" placeholder="MM/YY">
+            </div>
+            <div class="mb-3">
+              <label for="cvv" class="form-label">رمز التحقق CVV</label>
+              <input type="text" name="cvv" id="cvv" class="form-control">
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'donor_dashboard' %}" class="btn btn-outline-success rounded-pill px-4">العودة</a>
+            <button type="submit" class="btn btn-success rounded-pill px-4">تبرع الآن</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleCardFields() {
+    const method = document.getElementById('payment_method').value;
+    const cardFields = document.getElementById('card-fields');
+    cardFields.style.display = method === 'credit' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

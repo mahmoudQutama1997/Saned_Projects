@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}طلب مساعدة{% endblock %}
+
+{% block content %}
+
+<div class="bg-white shadow p-5 rounded-4" style="max-width: 700px; margin: auto;">
+  <h3 class="mb-4 text-center" style="color: #004D40;">📥 تقديم طلب مساعدة</h3>
+
+  <form method="POST" enctype="multipart/form-data" action="{% url 'submit_aid_request' %}">
+    {% csrf_token %}
+
+    <div class="form-group mb-3">
+      <label for="type">نوع المساعدة</label>
+      <input type="text" class="form-control" name="type" id="type" required>
+      {% if errors.type %}<small class="text-danger">{{ errors.type }}</small>{% endif %}
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="description">الوصف</label>
+      <textarea class="form-control" name="description" id="description" rows="4" required></textarea>
+      {% if errors.description %}<small class="text-danger">{{ errors.description }}</small>{% endif %}
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="amount">المبلغ المطلوب (₪)</label>
+      <input type="number" class="form-control" name="amount" id="amount" required>
+      {% if errors.amount %}<small class="text-danger">{{ errors.amount }}</small>{% endif %}
+    </div>
+
+    <div class="form-group mb-4">
+      <label for="document">مستند إثبات (PDF أو صورة)</label>
+      <input type="file" class="form-control" name="document" id="document" accept=".pdf,image/*" required>
+      {% if errors.document %}<small class="text-danger">{{ errors.document }}</small>{% endif %}
+    </div>
+
+    <div class="text-center">
+      <button type="submit" class="btn btn-success rounded-pill px-5">إرسال الطلب</button>
+    </div>
+  </form>
+  
+</div>
+
+{% endblock %}

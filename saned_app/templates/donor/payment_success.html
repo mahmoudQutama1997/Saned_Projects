@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}طلب مساعدة{% endblock %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Confirmed</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <div class="card shadow-lg p-5 rounded text-center">
+        <h1 class="text-success mb-4">🎉 شكرا, {{ user.first_name }}!</h1>
+
+        <p class="lead">تبرعك الى حملة <strong>{{ campaign.title }}</strong> كانت ناجحة.</p>
+
+        <hr class="my-4">
+
+        <p>نقدّر دعمكم حقًا. كل مساهمة تُحدث فرقًا!</p>
+
+        <a href="{% url 'donor_dashboard' %}" class="btn btn-primary mt-4">العودة الى الصفحة الرئيسية</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+{% endblock %}

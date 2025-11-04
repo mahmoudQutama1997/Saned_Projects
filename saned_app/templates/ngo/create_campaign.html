@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}المساهمة في الحملة{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="direction: rtl;">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4 p-4" style="background-color: #f9fdfc;">
+                <h2 class="text-center text-success fw-bold mb-3">🎯 إنشاء حملة جديدة</h2>
+                <p class="text-center text-muted mb-4">املأ البيانات التالية لإنشاء حملة تابعة لجمعيتك</p>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} text-center">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="POST" action="{% url 'create_campaign_submit' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="title" class="form-label fw-semibold">عنوان الحملة</label>
+                        <input type="text" class="form-control form-control-lg" id="title" name="title"
+                            placeholder="مثال: حملة الشتاء الدافئ" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label fw-semibold">وصف الحملة</label>
+                        <textarea class="form-control" id="description" name="description" rows="4"
+                            placeholder="أدخل تفاصيل وأهداف الحملة..." required></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="goal_amount" class="form-label fw-semibold">المبلغ المستهدف (شيكل)</label>
+                            <input type="number" class="form-control" id="goal_amount" name="goal_amount" min="1"
+                                placeholder="مثال: 10000" required>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label for="deadline" class="form-label fw-semibold">تاريخ انتهاء الحملة</label>
+                            <input type="date" class="form-control" id="deadline" name="deadline" required>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg rounded-pill">إنشاء الحملة ✅</button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <a href="{% url 'ngo_dashboard' %}" class="btn btn-outline-success rounded-pill px-4">
+                        ← العودة إلى لوحة التحكم
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

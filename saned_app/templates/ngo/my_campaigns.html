@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}حملاتي{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="mb-4 d-flex justify-content-between align-items-center">
+    <h2 class="fw-bold text-success">📜 حملاتي</h2>
+  </div>
+
+  {% if campaigns %}
+  <div class="row g-4">
+    {% for camp in campaigns %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-sm border-0 rounded-4 h-100">
+        <div class="card-body d-flex flex-column">
+          <h5 class="fw-bold text-primary mb-2">{{ camp.title }}</h5>
+          <p class="text-muted small mb-3">{{ camp.description|truncatechars:90 }}</p>
+          <p class="mb-1">💰 <strong>الهدف:</strong> {{ camp.goal_amount }} شيكل</p>
+          <p class="mb-1">🟢 <strong>المُجمّع:</strong> {{ camp.total_donated }} شيكل</p>
+
+          <div class="progress mt-2" style="height: 20px;">
+            <div class="progress-bar 
+                {% if camp.is_completed %} bg-success 
+                {% elif camp.percentage < 30 %} bg-danger 
+                {% else %} bg-warning 
+                {% endif %}"
+              role="progressbar"
+              style="width: {{ camp.percentage }}%;"
+              aria-valuenow="{{ camp.percentage }}"
+              aria-valuemin="0"
+              aria-valuemax="100">
+              {{ camp.percentage }}%
+            </div>
+          </div>
+
+          {% if camp.is_completed %}
+          <p class="text-success fw-bold mt-2 mb-0">✅ تم الوصول إلى الهدف!</p>
+          {% endif %}
+
+          <p class="text-muted mb-0 mt-2">📅 {{ camp.created_at|date:"d M Y" }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info text-center shadow-sm rounded-4 mt-4">
+    لم تقم بإنشاء أي حملة بعد.
+  </div>
+  {% endif %}
+  <br>
+      <div class="mb-4 text-start">
+    <a href="{% url 'ngo_dashboard' %}" class="btn btn-outline-success rounded-pill px-4">
+      رجوع إلى لوحة التحكم
+    </a>
+  </div>
+</div>
+{% endblock %}

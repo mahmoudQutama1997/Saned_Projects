@@ -1,0 +1,229 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>إنشاء حساب - ساند</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'CSS/style.css' %}" />
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #ffffff, #A8D5C3);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .register-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 8%;
+    }
+    .register-card {
+      flex: 1;
+      background-color: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+    }
+    .form-label {
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .input-group {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .input-group-text {
+      background-color: #e9ecef;
+      border: none;
+      padding: 10px 14px;
+    }
+    .form-control {
+      border: none;
+      border-radius: 0;
+      padding: 10px 14px;
+      box-shadow: none;
+    }
+    .form-control:focus {
+      outline: none;
+      box-shadow: none;
+    }
+    .btn {
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 1.1rem;
+    }
+    .text-danger.small {
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+    }
+    @media (max-width: 768px) {
+      .register-wrapper {
+        flex-direction: column;
+        text-align: center;
+      }
+      .register-card {
+        max-width: 100%;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="register-wrapper">
+    <div class="register-card">
+      <h2 class="text-center mb-4"><i class="fas fa-user-plus me-2"></i>إنشاء حساب جديد</h2>
+      <div id="register-success" class="alert alert-success text-center d-none"></div>
+      <form id="register-form">
+        {% csrf_token %}
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-user"></i></span>
+          <input type="text" name="registerFirstName" class="form-control" placeholder="الاسم الأول" required />
+        </div>
+        <div class="text-danger small" id="error-registerFirstName"></div>
+
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-user"></i></span>
+          <input type="text" name="registerLastName" class="form-control" placeholder="الاسم الأخير" required />
+        </div>
+        <div class="text-danger small" id="error-registerLastName"></div>
+
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+          <input type="email" name="registerEmail" class="form-control" placeholder="البريد الإلكتروني" required />
+        </div>
+        <div class="text-danger small" id="error-registerEmail"></div>
+
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+          <select name="role" id="role" class="form-control" onchange="toggleFieldsByRole()" required>
+            <option value="">اختر نوع الحساب</option>
+            <option value="beneficiary">محتاج</option>
+            <option value="donor">متبرع</option>
+            <option value="ngo">جمعية</option>
+          </select>
+        </div>
+        <div class="text-danger small" id="error-role"></div>
+
+        <div class="input-group mb-2" id="single-region-group" style="display: none;">
+          <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+          <select name="registerRegion" id="single-region-select" class="form-control">
+            <option value="" disabled selected>اختر المدينة</option>
+            {% for city in cities %}
+              <option value="{{ city }}">{{ city }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div id="region-checkboxes" class="mb-2" style="display: none;">
+          <label class="form-label">اختر المدن التي تعمل بها الجمعية:</label>
+          {% for city in cities %}
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" name="regions" value="{{ city }}" id="city-{{ forloop.counter }}">
+              <label class="form-check-label" for="city-{{ forloop.counter }}">{{ city }}</label>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="text-danger small" id="error-registerRegion"></div>
+
+        <div id="ngo-document-group" class="input-group mb-2" style="display: none;">
+          <span class="input-group-text"><i class="fas fa-file-upload"></i></span>
+          <input type="file" name="licenseDocument" class="form-control" />
+        </div>
+
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-lock"></i></span>
+          <input type="password" name="registerPassword" class="form-control" placeholder="كلمة المرور" required />
+        </div>
+        <div class="text-danger small" id="error-registerPassword"></div>
+
+        <div class="input-group mb-2">
+          <span class="input-group-text"><i class="fas fa-lock"></i></span>
+          <input type="password" name="registerRepeatPassword" class="form-control" placeholder="تأكيد كلمة المرور" required />
+        </div>
+        <div class="text-danger small" id="error-registerRepeatPassword"></div>
+
+        <button type="submit" class="btn btn-success w-100">إنشاء حساب</button>
+
+        <p class="mt-3 text-center">
+          لديك حساب بالفعل؟ <a href="{% url 'login' %}" class="fw-bold" style="color: #004D40;">سجّل الدخول</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function toggleFieldsByRole() {
+      const role = document.getElementById("role").value;
+      document.getElementById("ngo-document-group").style.display = "none";
+      document.getElementById("single-region-group").style.display = "none";
+      document.getElementById("region-checkboxes").style.display = "none";
+
+      if (role === "ngo") {
+        document.getElementById("ngo-document-group").style.display = "flex";
+        document.getElementById("region-checkboxes").style.display = "block";
+      } else if (role === "beneficiary") {
+        document.getElementById("single-region-group").style.display = "flex";
+      }
+    }
+
+    document.getElementById("register-form").onsubmit = async function (e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const role = document.getElementById("role").value;
+
+      formData.delete("registerRegion");
+
+      if (role === "ngo") {
+        const selectedCities = [...form.querySelectorAll('input[name="regions"]:checked')].map(cb => cb.value);
+        if (selectedCities.length === 0) {
+          document.getElementById("error-registerRegion").innerHTML = "يرجى اختيار مدينة واحدة على الأقل.";
+          return;
+        }
+        formData.append("registerRegion", selectedCities.join(","));
+      } else if (role === "beneficiary") {
+        const selected = document.getElementById("single-region-select").value;
+        if (!selected) {
+          document.getElementById("error-registerRegion").innerHTML = "يرجى اختيار المدينة.";
+          return;
+        }
+        formData.append("registerRegion", selected);
+      } else if (role === "donor") {
+        formData.append("registerRegion", "");
+      }
+
+      const response = await fetch("{% url 'create_user' %}", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: formData
+      });
+
+      const res = await response.json();
+      document.querySelectorAll(".text-danger.small").forEach(el => el.innerHTML = "");
+      const successBox = document.getElementById("register-success");
+
+      if (res.success) {
+        form.reset();
+        form.style.display = "none";
+        successBox.innerHTML = `تم إنشاء الحساب بنجاح! <br><a href="{% url 'login' %}" class="btn btn-outline-dark mt-3">تسجيل الدخول الآن</a>`;
+        successBox.classList.remove("d-none");
+      } else {
+        for (const key in res.errors) {
+          const errorDiv = document.getElementById(`error-${key}`);
+          if (errorDiv) errorDiv.innerHTML = res.errors[key];
+        }
+      }
+    };
+  </script>
+
+  <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

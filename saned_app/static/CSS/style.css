@@ -1,0 +1,148 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background:  #bde8d7;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+main.container {
+    flex: 1;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.welcome-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 60px;
+    padding: 60px 10%;
+    min-height: 100vh;
+}
+
+.welcome-text {
+    max-width: 50%;
+    flex: 1;
+}
+
+.welcome-text h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #004D40;
+}
+
+.welcome-text p {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    color: #444;
+}
+
+.welcome-buttons a {
+    font-size: 1.1rem;
+    padding: 12px 24px;
+    border-radius: 30px;
+}
+
+.welcome-image {
+    flex: 1.2;
+    display: flex;
+    justify-content: center;
+}
+
+.welcome-image img {
+    max-width: 900px;
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .welcome-section {
+        flex-direction: column;
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .welcome-image {
+        display: none;
+    }
+
+    .welcome-text {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .welcome-text h1 {
+        font-size: 2rem;
+    }
+
+    .welcome-text p {
+        font-size: 1rem;
+    }
+}
+
+.navbar-custom {
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-custom .navbar-brand {
+    color: #004D40;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.navbar-custom .nav-link {
+    color: #004D40 !important;
+    font-weight: 500;
+    margin-right: 15px;
+}
+
+.navbar-custom .nav-link:hover {
+    text-decoration: underline;
+}
+
+footer {
+    color: #555;
+    font-size: 0.9rem;
+}
+.btn-custom {
+    background-color: #004D40;
+    color: #fff;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+    background-color: #00695c;
+    transform: translateY(-2px);
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card h5, .card h4 {
+    color: #004D40;
+}
+
+footer {
+    background-color: #eaf7f0;
+    text-align: center;
+    padding: 20px 0;
+    border-top: 1px solid #cde4da;
+    margin-top: auto;
+}

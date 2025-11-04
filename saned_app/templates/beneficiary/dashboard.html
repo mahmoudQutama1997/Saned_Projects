@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}لوحة المحتاج{% endblock %}
+
+{% block content %}
+<div class="bg-white shadow-sm p-4 rounded-4" style="max-width: 1000px; margin: auto;">
+  <h2 class="mb-4" style="color: #004d40;">👋 مرحبًا {{ request.session.name }}</h2>
+  <p class="text-muted">في لوحة التحكم هذه، يمكنك متابعة طلبات المساعدة الخاصة بك وتقديم طلبات جديدة.</p>
+
+  <hr class="mb-4">
+
+  <div class="d-flex justify-content-between flex-wrap gap-3">
+    <a href="{% url 'aid_request_form' %}" class="btn btn-success btn-lg rounded-pill px-4">📥 تقديم طلب جديد</a>
+    <a href="{% url 'my_requests' %}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">📄 عرض كل الطلبات</a>
+  </div>
+
+  <hr class="my-4">
+
+  <h4 class="mb-3">🧾 أحدث 3 طلبات</h4>
+  {% if recent_requests %}
+    <div class="list-group">
+      {% for request in recent_requests %}
+        <div class="list-group-item rounded shadow-sm mb-3 p-3">
+          <div class="d-flex justify-content-between align-items-start flex-wrap">
+            <div style="max-width: 70%;">
+              <h5 class="fw-bold mb-1">{{ request.type }}</h5>
+              <p class="mb-2 text-muted">{{ request.description|truncatechars:100 }}</p>
+              <p class="mb-0">💰 <strong>{{ request.amount_requested }} شيكل</strong></p>
+            </div>
+            <div class="text-end">
+              <span class="badge rounded-pill 
+                {% if request.status == 'pending' %}bg-warning text-dark
+                {% elif request.status == 'approved' %}bg-success
+                {% elif request.status == 'rejected' %}bg-danger
+                {% elif request.status == 'delivered' %}bg-info
+                {% endif %}">
+                {% if request.status == 'pending' %}
+                  قيد المراجعة
+                {% elif request.status == 'approved' %}
+                  تم الاعتماد
+                {% elif request.status == 'rejected' %}
+                  مرفوض
+                {% elif request.status == 'delivered' %}
+                  قيد التوصيل
+                {% endif %}
+              </span>
+              <br>
+              <small class="text-muted">{{ request.created_at|date:"d M Y" }}</small>
+
+              {% if request.status == 'delivered' %}
+                <p class="mt-2 text-success fw-bold">🚚 تم اعتماد طلبك، والمبلغ قيد التوصيل.</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">لا توجد طلبات بعد.</p>
+  {% endif %}
+</div>
+{% endblock %}

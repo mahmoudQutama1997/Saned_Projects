@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block title %}لوحة تحكم الجمعية{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-5 text-center">
+        <h2 class="fw-bold text-success">🎯 لوحة تحكم الجمعية</h2>
+        <p class="text-muted fs-6">مرحبًا بك، يمكنك إدارة حملاتك وطلبات منطقتك بكل سهولة وفعالية</p>
+    </div>
+
+    <div class="card mb-4 shadow-sm border-0 rounded-4">
+        <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+            <div>
+                <h5 class="mb-2">📌 <strong>{{ profile.organization_name }}</strong></h5>
+            </div>
+            <div>
+                {% if profile.approved %}
+                    <span class="badge bg-success fs-6 px-4 py-2 rounded-pill">تم الاعتماد ✅</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark fs-6 px-4 py-2 rounded-pill">قيد المراجعة ⏳</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center mb-5">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3">
+                <h5 class="text-success fw-bold">{{ total_campaigns }}</h5>
+                <p class="text-muted mb-0">حملة منشأة</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3">
+                <h5 class="text-primary fw-bold">{{ adopted_requests_count }}</h5>
+                <p class="text-muted mb-0">طلبات تم تبنيها</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3">
+                <h5 class="text-dark fw-bold">{{ region_requests_count }}</h5>
+                <p class="text-muted mb-0">طلبات منطقتك</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 rounded-4 p-3">
+                <h5 class="text-danger fw-bold">{{ total_donations|default:0 }} ₪</h5>
+                <p class="text-muted mb-0">إجمالي التبرعات</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <a href="{% url 'create_campaign_form' %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm rounded-4 text-center py-4 h-100">
+                    <div class="fs-2 mb-2 text-success">➕</div>
+                    <h6 class="fw-bold text-dark">إنشاء حملة جديدة</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'region_requests' %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm rounded-4 text-center py-4 h-100">
+                    <div class="fs-2 mb-2 text-primary">📄</div>
+                    <h6 class="fw-bold text-dark">عرض طلبات منطقتي</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'my_campaigns' %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm rounded-4 text-center py-4 h-100">
+                    <div class="fs-2 mb-2 text-secondary">📜</div>
+                    <h6 class="fw-bold text-dark">حملاتي</h6>
+                </div>
+            </a>
+        </div>
+        
+        <div class="col-md-3">
+            <a href="{% url 'adopted_requests' %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm rounded-4 text-center py-4 h-100">
+                    <div class="fs-2 mb-2 text-warning">📦</div>
+                    <h6 class="fw-bold text-dark">الطلبات التي تم تبنيها</h6>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    {% if adopted_requests_data %}
+    <h5 class="fw-bold text-primary mt-5 mb-4 border-bottom pb-2">📦 الطلبات التي تم تبنيها</h5>
+    <div class="row g-4 mb-5">
+        {% for r in adopted_requests_data %}
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
+                <h6 class="fw-bold mb-2">📌 {{ r.type }}</h6>
+                <p class="mb-1 text-muted">{{ r.description }}</p>
+                <p class="mb-1">🎯 المبلغ المطلوب: <strong>{{ r.amount_requested }} ₪</strong></p>
+                <p class="mb-1">💰 تم جمع: <strong>{{ r.donated }} ₪</strong></p>
+                <p class="mb-0 text-danger">💡 المتبقي: <strong>{{ r.remaining }} ₪</strong></p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-warning text-center mt-5 mb-5">لا توجد طلبات تم تبنيها بعد.</div>
+    {% endif %}
+
+    {% if ongoing_campaigns %}
+    <h5 class="fw-bold text-success mt-5 mb-4 border-bottom pb-2">📢 الحملات الجارية</h5>
+    <div class="row g-4 mb-5">
+        {% for c in ongoing_campaigns %}
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
+                <h6 class="fw-bold mb-2">{{ c.title }}</h6>
+                <p class="mb-1">📅 ينتهي في: <strong>{{ c.deadline }}</strong></p>
+                <p class="mb-1">🎯 الهدف: <strong>{{ c.goal }} ₪</strong></p>
+                <p class="mb-1">💰 تم جمع: <strong>{{ c.donated }} ₪</strong></p>
+                <p class="mb-0 text-danger">💡 المتبقي: <strong>{{ c.remaining }} ₪</strong></p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center mt-5 mb-5">لا توجد حملات جارية حالياً.</div>
+    {% endif %}
+
+</div>
+<div>
+    <a href="{% url 'export_donations_excel' %}" class="btn btn-success">📊 تحميل التبرعات Excel</a>
+    <a href="{% url 'export_requests_excel' %}" class="btn btn-danger">📄 تحميل الطلبات Excel</a>
+</div>
+{% endblock %}

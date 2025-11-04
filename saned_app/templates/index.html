@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>مرحبًا بك في ساند</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'CSS/style.css' %}">
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom right, #f2fef8, #A8D5C3);
+    }
+
+    .welcome-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 60px 10%;
+      min-height: 100vh;
+      gap: 60px;
+    }
+
+    .welcome-text {
+      max-width: 50%;
+      flex: 1;
+    }
+
+    .welcome-text h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #004D40;
+    }
+
+    .welcome-text p {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      color: #444;
+    }
+
+    .welcome-buttons a {
+      font-size: 1.1rem;
+      padding: 12px 24px;
+      border-radius: 30px;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .welcome-buttons a:hover {
+      transform: scale(1.05);
+    }
+
+    .welcome-image {
+      flex: 1.2;
+      display: flex;
+      justify-content: center;
+    }
+
+    .welcome-image img {
+      max-width: 600px;
+      width: 100%;
+      height: auto;
+    }
+
+    @media (max-width: 768px) {
+      .welcome-section {
+        flex-direction: column;
+        text-align: center;
+        padding: 40px 20px;
+      }
+
+      .welcome-image {
+        display: none;
+      }
+
+      .welcome-text {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <section class="welcome-section">
+    <div class="welcome-text">
+      <h1>مرحباً بك في <span style="color: #004D40;">ساند</span></h1>
+      <p>
+        منصة تبرعات رقمية تساعد على إيصال المساعدات للعائلات المحتاجة  
+        من خلال الجمعيات والمؤسسات الخيرية بطريقة شفافة وفعالة، مع حفظ كرامة المحتاج.
+      </p>
+      <div class="welcome-buttons d-grid gap-3">
+        <a href="{% url 'login' %}" class="btn btn-success">تسجيل الدخول</a>
+        <a href="{% url 'register' %}" class="btn btn-outline-success">إنشاء حساب جديد</a>
+      </div>
+    </div>
+
+    <div class="welcome-image">
+      <img src="{% static 'images/welcome.png' %}" alt="صورة ترحيبية">
+    </div>
+  </section>
+
+  <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

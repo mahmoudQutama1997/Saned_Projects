@@ -1,0 +1,176 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>تسجيل الدخول - ساند</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #ffffff, #A8D5C3);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .login-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px 8%;
+        }
+        .login-card {
+            flex: 1;
+            background-color: transparent;
+            padding: 40px;
+            max-width: 450px;
+        }
+        .login-card h2 {
+            color: #004D40;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .login-card .form-label {
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .login-card .input-group {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .login-card .input-group-text {
+            background-color: #e9ecef;
+            border: none;
+            padding: 10px 14px;
+        }
+        .login-card .form-control {
+            border: none;
+            border-radius: 0;
+            padding: 10px 14px;
+            box-shadow: none;
+        }
+        .login-card .form-control:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        .login-card .btn {
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .login-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-image img {
+            max-width: 100%;
+            height: auto;
+        }
+        @media (max-width: 768px) {
+            .login-wrapper {
+                flex-direction: column;
+                text-align: center;
+            }
+            .login-image {
+                margin-bottom: 30px;
+            }
+            .login-card {
+                max-width: 100%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="text-center mb-4">
+                <i class="fas fa-hand-holding-heart fa-3x" style="color: #004D40;"></i>
+                <h2>تسجيل الدخول</h2>
+            </div>
+
+            <div id="login-errors" class="text-danger mb-3 text-center"></div>
+
+            <form id="login-form">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">البريد الإلكتروني</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                        <input type="email" name="loginEmail" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">كلمة المرور</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" name="loginPassword" class="form-control" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">دخول</button>
+
+                <p class="mt-3 text-center">
+                    ليس لديك حساب؟ <a href="{% url 'register' %}" class="fw-bold" style="color: #004D40;">إنشاء حساب جديد</a>
+                </p>
+            </form>
+        </div>
+
+        <div class="login-image">
+            <img src="{% static 'images/welcome.png' %}" alt="صورة ترحيبية">
+        </div>
+    </div>
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        document.getElementById("login-form").onsubmit = async function (e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = Object.fromEntries(new FormData(form).entries());
+            const csrfToken = getCookie('csrftoken');
+
+            const response = await fetch("{% url 'login_user' %}", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(data)
+            });
+
+            const res = await response.json();
+            const errorBox = document.getElementById("login-errors");
+            errorBox.innerHTML = "";
+
+            if (res.success) {
+                window.location.href = res.redirect_url;
+            } else {
+                errorBox.innerHTML = Object.values(res.errors).join("<br>");
+            }
+        };
+    </script>
+
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
